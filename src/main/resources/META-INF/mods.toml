@@ -1,0 +1,42 @@
+
+modLoader="javafml" #mandatory
+
+loaderVersion="[31,)"
+
+issueTrackerURL="https://github.com/devsavage/mobsreborn/issues" #optional
+
+[[mods]]
+
+modId="mobsreborn"
+
+version="${file.jarVersion}"
+
+displayName="MobsReborn"
+
+updateJSONURL="http://myurl.me/"
+
+displayURL="https://github.com/devsavage/mobsreborn"
+
+logoFile=""
+
+credits="Thank you to the Forge team!"
+
+authors="savagedev"
+
+description='''
+Rebirth mobs after death.
+'''
+
+[[dependencies.natured]]
+    modId="forge"
+    mandatory=true
+    versionRange="[31,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.natured]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.15.2]"
+    ordering="NONE"
+    side="BOTH"

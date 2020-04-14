@@ -1,0 +1,13 @@
+{
+  "itemGroup.mobsreborn": "Natured",
+
+  "item.mobsreborn.creeper_dust": "Creeper Dust",
+  "item.mobsreborn.skeleton_dust": "Skeleton Dust",
+  "item.mobsreborn.zombie_dust": "Zombie Dust",
+  "item.mobsreborn.enderman_dust": "Enderman Dust",
+
+  "item.mobsreborn.creeper_metal": "Creeper Metal",
+  "item.mobsreborn.skeleton_metal": "Skeleton Metal",
+  "item.mobsreborn.zombie_metal": "Zombie Metal",
+  "item.mobsreborn.enderman_metal": "Enderman Metal"
+}
