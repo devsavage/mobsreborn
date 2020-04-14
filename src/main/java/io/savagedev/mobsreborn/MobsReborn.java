@@ -1,7 +1,7 @@
 package io.savagedev.mobsreborn;
 
 /*
- * Natured.java
+ * MobsReborn.java
  * Copyright (C) 2020 Savage - github.com/devsavage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
