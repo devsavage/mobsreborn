@@ -25,6 +25,7 @@ package io.savagedev.mobsreborn.init;
 
 import io.savagedev.mobsreborn.MobsReborn;
 import io.savagedev.mobsreborn.blocks.BaseBlock;
+import io.savagedev.mobsreborn.items.BaseBlockItem;
 import io.savagedev.mobsreborn.reference.ModReference;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -53,7 +54,7 @@ public class ModBlocks
     }
 
     private static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block) {
-        return register(name, block, b -> () -> new BaseBlock(b.get(), p -> p.group(MobsReborn.modTab)));
+        return register(name, block, b -> () -> new BaseBlockItem(b.get(), p -> p.group(MobsReborn.modTab)));
     }
 
     private static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, Function<RegistryObject<T>, Supplier<? extends BlockItem>> item) {

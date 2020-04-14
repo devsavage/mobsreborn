@@ -1,7 +1,7 @@
-package io.savagedev.mobsreborn.items;
+package io.savagedev.mobsreborn.blocks;
 
 /*
- * BaseItem.java
+ * BaseTileEntityBlock.java
  * Copyright (C) 2020 Savage - github.com/devsavage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,13 +23,25 @@ package io.savagedev.mobsreborn.items;
  * THE SOFTWARE.
  */
 
-import net.minecraft.item.Item;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 
 import java.util.function.Function;
 
-public class BaseItem extends Item
+public class BaseTileEntityBlock extends BaseBlock
 {
-    public BaseItem(Function<Properties, Properties> properties) {
-        super(properties.apply(new Properties()));
+    public BaseTileEntityBlock(Material material, Function<Properties, Properties> properties) {
+        super(material, properties);
+    }
+
+    public BaseTileEntityBlock(Material material, SoundType sound, float hardness, float resistance) {
+        super(material, sound, hardness, resistance);
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
     }
 }

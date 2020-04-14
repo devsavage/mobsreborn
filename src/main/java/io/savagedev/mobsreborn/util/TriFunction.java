@@ -1,8 +1,8 @@
-package io.savagedev.mobsreborn.items;
+package io.savagedev.mobsreborn.util;
 
 /*
- * BaseItem.java
- * Copyright (C) 2020 Savage - github.com/devsavage
+ * TriFunction.java
+ * Copyright (C) blakebr0
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,13 +23,15 @@ package io.savagedev.mobsreborn.items;
  * THE SOFTWARE.
  */
 
-import net.minecraft.item.Item;
-
+import java.util.Objects;
 import java.util.function.Function;
 
-public class BaseItem extends Item
-{
-    public BaseItem(Function<Properties, Properties> properties) {
-        super(properties.apply(new Properties()));
+@FunctionalInterface
+public interface TriFunction<A,B,C,R> {
+    R apply(A a, B b, C c);
+
+    default <V> TriFunction<A, B, C, V> andThen(Function<? super R, ? extends V> after) {
+        Objects.requireNonNull(after);
+        return (A a, B b, C c) -> after.apply(apply(a, b, c));
     }
 }

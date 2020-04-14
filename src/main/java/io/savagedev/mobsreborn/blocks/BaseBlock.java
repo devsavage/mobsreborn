@@ -1,7 +1,7 @@
 package io.savagedev.mobsreborn.blocks;
 
 /*
- * BlockNaturedBlock.java
+ * BaseBlock.java
  * Copyright (C) 2020 Savage - github.com/devsavage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,13 +24,19 @@ package io.savagedev.mobsreborn.blocks;
  */
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 
 import java.util.function.Function;
 
-public class BaseBlock extends BlockItem
+public class BaseBlock extends Block
 {
-    public BaseBlock(Block block, Function<Properties, Properties> properties) {
-        super(block, properties.apply(new Properties()));
+    public BaseBlock(Material material, Function<Properties, Properties> properties) {
+        super(properties.apply(Properties.create(material)));
+    }
+
+    public BaseBlock(Material material, SoundType sound, float hardness, float resistance) {
+        super(Properties.create(material).sound(sound).hardnessAndResistance(hardness, resistance));
     }
 }

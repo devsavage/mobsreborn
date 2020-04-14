@@ -1,7 +1,7 @@
 package io.savagedev.mobsreborn.items;
 
 /*
- * BaseItem.java
+ * BaseBlockItem.java
  * Copyright (C) 2020 Savage - github.com/devsavage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,13 +23,14 @@ package io.savagedev.mobsreborn.items;
  * THE SOFTWARE.
  */
 
-import net.minecraft.item.Item;
+import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
 
 import java.util.function.Function;
 
-public class BaseItem extends Item
+public class BaseBlockItem extends BlockItem
 {
-    public BaseItem(Function<Properties, Properties> properties) {
-        super(properties.apply(new Properties()));
+    public BaseBlockItem(Block block, Function<Properties, Properties> properties) {
+        super(block, properties.apply(new Properties()));
     }
 }

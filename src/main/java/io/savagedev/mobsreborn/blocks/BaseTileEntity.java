@@ -1,7 +1,7 @@
-package io.savagedev.mobsreborn.items;
+package io.savagedev.mobsreborn.blocks;
 
 /*
- * BaseItem.java
+ * BaseTileEntity.java
  * Copyright (C) 2020 Savage - github.com/devsavage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,13 +23,39 @@ package io.savagedev.mobsreborn.items;
  * THE SOFTWARE.
  */
 
-import net.minecraft.item.Item;
+import io.savagedev.mobsreborn.util.VanillaPacketTransmitter;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 
-import java.util.function.Function;
+import javax.annotation.Nullable;
 
-public class BaseItem extends Item
+public class BaseTileEntity extends TileEntity
 {
-    public BaseItem(Function<Properties, Properties> properties) {
-        super(properties.apply(new Properties()));
+    public BaseTileEntity(TileEntityType<?> tileEntityTypeIn) {
+        super(tileEntityTypeIn);
+    }
+
+    @Nullable
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(this.getPos(), -1, this.getUpdateTag());
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        this.read(pkt.getNbtCompound());
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        return this.write(new CompoundNBT());
+    }
+
+    public void markDirtyAndDispatchPacket() {
+        super.markDirty();
+        VanillaPacketTransmitter.transmitTEToNearbyPlayers(this);
     }
 }
