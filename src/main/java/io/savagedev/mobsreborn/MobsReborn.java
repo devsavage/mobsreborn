@@ -25,7 +25,9 @@ package io.savagedev.mobsreborn;
 
 import io.savagedev.mobsreborn.events.MobDropHandler;
 import io.savagedev.mobsreborn.init.ModBlocks;
+import io.savagedev.mobsreborn.init.ModContainers;
 import io.savagedev.mobsreborn.init.ModItems;
+import io.savagedev.mobsreborn.init.ModTileEntities;
 import io.savagedev.mobsreborn.reference.ModReference;
 import io.savagedev.mobsreborn.util.LogHelper;
 import net.minecraft.item.ItemGroup;
@@ -34,6 +36,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -53,6 +56,13 @@ public class MobsReborn
         modEventBus.register(this);
         modEventBus.register(new ModBlocks());
         modEventBus.register(new ModItems());
+        modEventBus.register(new ModTileEntities());
+        modEventBus.register(new ModContainers());
+    }
+
+    @SubscribeEvent
+    public void onClientSetup(FMLClientSetupEvent event) {
+        ModContainers.onClientSetup();
     }
 
     @SubscribeEvent

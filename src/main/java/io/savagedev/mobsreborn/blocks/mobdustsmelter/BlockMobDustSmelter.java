@@ -24,12 +24,15 @@ package io.savagedev.mobsreborn.blocks.mobdustsmelter;
  */
 
 import io.savagedev.mobsreborn.blocks.BaseTileEntityBlock;
+import io.savagedev.mobsreborn.util.LogHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
@@ -55,16 +58,32 @@ public class BlockMobDustSmelter extends BaseTileEntityBlock
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return null;
+        return new TileEntityMobDustSmelter();
     }
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+        if(!worldIn.isRemote()) {
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            if(tileEntity instanceof TileEntityMobDustSmelter) {
+                player.openContainer((INamedContainerProvider) tileEntity);
+                LogHelper.debug(((TileEntityMobDustSmelter) tileEntity).getTotalFuelStored());
+            }
+        }
+
+        return ActionResultType.SUCCESS;
     }
 
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if(state.getBlock() != newState.getBlock()) {
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            if(tileEntity instanceof TileEntityMobDustSmelter) {
+                TileEntityMobDustSmelter tileEntityMobDustSmelter = (TileEntityMobDustSmelter) tileEntity;
+                InventoryHelper.dropItems(worldIn, pos, tileEntityMobDustSmelter.getInventory().getStacks());
+            }
+        }
+
         super.onReplaced(state, worldIn, pos, newState, isMoving);
     }
 

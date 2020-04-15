@@ -1,0 +1,5 @@
+- fix shifting items into container
+- save tile entity items and state
+- fix slots
+- rework fuel and smelting system
+- add tooltip on fuel status

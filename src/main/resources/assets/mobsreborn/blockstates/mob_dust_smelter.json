@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "mobsreborn:block/mob_dust_smelter" },
+    "facing=south": { "model": "mobsreborn:block/mob_dust_smelter", "y": 180 },
+    "facing=west":  { "model": "mobsreborn:block/mob_dust_smelter", "y": 270 },
+    "facing=east":  { "model": "mobsreborn:block/mob_dust_smelter", "y": 90 }
+  }
+}

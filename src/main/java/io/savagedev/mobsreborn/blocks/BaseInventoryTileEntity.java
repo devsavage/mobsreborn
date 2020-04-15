@@ -71,6 +71,7 @@ public abstract class BaseInventoryTileEntity extends BaseTileEntity
 
     public boolean isUsableByPlayer(PlayerEntity player) {
         BlockPos pos = this.getPos();
+
         return player.getDistanceSq(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64;
     }
 }

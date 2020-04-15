@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "natured:items/skeleton_metal"
+    "layer0": "mobsreborn:items/skeleton_metal"
   }
 }

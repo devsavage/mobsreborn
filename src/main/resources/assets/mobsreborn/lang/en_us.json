@@ -9,5 +9,9 @@
   "item.mobsreborn.creeper_metal": "Creeper Metal",
   "item.mobsreborn.skeleton_metal": "Skeleton Metal",
   "item.mobsreborn.zombie_metal": "Zombie Metal",
-  "item.mobsreborn.enderman_metal": "Enderman Metal"
+  "item.mobsreborn.enderman_metal": "Enderman Metal",
+
+  "block.mobsreborn.mob_dust_smelter": "Mob Dust Smelter",
+
+  "container.mobsreborn.mob_dust_smelter": "Mob Dust Smelter"
 }

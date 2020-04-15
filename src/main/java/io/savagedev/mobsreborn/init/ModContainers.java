@@ -1,7 +1,7 @@
 package io.savagedev.mobsreborn.init;
 
 /*
- * ModTileEntities.java
+ * ModContainers.java
  * Copyright (C) 2020 Savage - github.com/devsavage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,18 +23,17 @@ package io.savagedev.mobsreborn.init;
  * THE SOFTWARE.
  */
 
-import io.savagedev.mobsreborn.blocks.mobdustsmelter.TileEntityMobDustSmelter;
+import io.savagedev.mobsreborn.blocks.mobdustsmelter.ContainerMobDustSmelter;
+import io.savagedev.mobsreborn.blocks.mobdustsmelter.ScreenMobDustSmelter;
 import io.savagedev.mobsreborn.reference.ModReference;
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -42,23 +41,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ModTileEntities
+public class ModContainers
 {
-    private static final List<Supplier<TileEntityType<?>>> ENTRIES = new ArrayList<>();
+    public static final List<Supplier<ContainerType<?>>> ENTRIES = new ArrayList<>();
 
-    public static final RegistryObject<TileEntityType<TileEntityMobDustSmelter>> mob_dust_smelter = register("mob_dust_smelter", TileEntityMobDustSmelter::new, () -> new Block[] { ModBlocks.mob_dust_smelter.get() });
-
+    public static final RegistryObject<ContainerType<ContainerMobDustSmelter>> mob_dust_smelter = register("mob_dust_smelter", () -> new ContainerType<>(ContainerMobDustSmelter::create));
 
     @SubscribeEvent
-    public void onRegisterTypes(RegistryEvent.Register<TileEntityType<?>> event) {
-        IForgeRegistry<TileEntityType<?>> registry = event.getRegistry();
+    public void onRegisterContainerTypes(RegistryEvent.Register<ContainerType<?>> event) {
+        IForgeRegistry<ContainerType<?>> registry = event.getRegistry();
 
         ENTRIES.stream().map(Supplier::get).forEach(registry::register);
     }
 
-    private static <T extends TileEntityType<?>> RegistryObject<T> register(String name, Supplier<TileEntity> tile, Supplier<Block[]> blocks) {
+    @OnlyIn(Dist.CLIENT)
+    public static void onClientSetup() {
+        mob_dust_smelter.ifPresent(container -> ScreenManager.registerFactory(container, ScreenMobDustSmelter::new));
+    }
+
+    private static <T extends ContainerType<?>> RegistryObject<T> register(String name, Supplier<? extends ContainerType<?>> container) {
         ResourceLocation loc = new ResourceLocation(ModReference.mod_id, name);
-        ENTRIES.add(() -> TileEntityType.Builder.create(tile, blocks.get()).build(null).setRegistryName(loc));
-        return RegistryObject.of(loc, ForgeRegistries.TILE_ENTITIES);
+        ENTRIES.add(() -> container.get().setRegistryName(loc));
+        return RegistryObject.of(loc, ForgeRegistries.CONTAINERS);
     }
 }

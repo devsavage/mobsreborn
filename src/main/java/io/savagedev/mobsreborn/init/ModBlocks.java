@@ -25,6 +25,7 @@ package io.savagedev.mobsreborn.init;
 
 import io.savagedev.mobsreborn.MobsReborn;
 import io.savagedev.mobsreborn.blocks.BaseBlock;
+import io.savagedev.mobsreborn.blocks.mobdustsmelter.BlockMobDustSmelter;
 import io.savagedev.mobsreborn.items.BaseBlockItem;
 import io.savagedev.mobsreborn.reference.ModReference;
 import net.minecraft.block.Block;
@@ -45,6 +46,7 @@ public class ModBlocks
 {
     public static final List<Supplier<? extends Block>> ENTRIES = new ArrayList<>();
 
+    public static final RegistryObject<BlockMobDustSmelter> mob_dust_smelter = register("mob_dust_smelter", () -> new BlockMobDustSmelter());
 
     @SubscribeEvent
     public void onRegisterBlocks(RegistryEvent.Register<Block> event) {
