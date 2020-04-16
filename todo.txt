@@ -3,3 +3,6 @@
 - fix slots
 - rework fuel and smelting system
 - add tooltip on fuel status
+- localize strings (container)
+- localize or rework fuel capacity/cost numbers
+- 
