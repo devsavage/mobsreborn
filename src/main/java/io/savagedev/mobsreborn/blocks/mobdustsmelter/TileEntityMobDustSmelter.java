@@ -69,7 +69,6 @@ import java.util.function.Function;
 public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements INamedContainerProvider, ITickableTileEntity
 {
     private final BaseItemStackHandler inventory = new BaseItemStackHandler(4);
-    private final BaseItemStackHandler recipeInv = new BaseItemStackHandler(2);
     private ISpecialRecipe recipe;
 
     private int progress;
@@ -203,11 +202,6 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
         if(dirty) {
             this.markDirty();
         }
-    }
-
-    private void updateRecipeInv(ItemStack input1, ItemStack input2) {
-        this.recipeInv.setStackInSlot(1, input1);
-        this.recipeInv.setStackInSlot(2, input2);
     }
 
     public int getFuelStored() {
