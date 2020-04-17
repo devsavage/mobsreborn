@@ -1,4 +1,4 @@
-package io.savagedev.mobsreborn.util;
+package io.savagedev.mobsreborn.crafting.slot;
 
 /*
  * BasicSlot.java
@@ -23,6 +23,7 @@ package io.savagedev.mobsreborn.util;
  * THE SOFTWARE.
  */
 
+import io.savagedev.mobsreborn.util.BaseItemStackHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;

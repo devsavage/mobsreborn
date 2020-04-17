@@ -24,6 +24,7 @@ package io.savagedev.mobsreborn.blocks.mobdustsmelter;
  */
 
 import io.savagedev.mobsreborn.reference.ModReference;
+import io.savagedev.mobsreborn.util.LogHelper;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -45,6 +46,7 @@ public class ScreenMobDustSmelter extends ContainerScreen<ContainerMobDustSmelte
     public void render(int mouseX, int mouseY, float pTicks) {
         this.renderBackground();
         super.render(mouseX, mouseY, pTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
     }
 
     @Override
@@ -59,21 +61,31 @@ public class ScreenMobDustSmelter extends ContainerScreen<ContainerMobDustSmelte
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         this.getMinecraft().getTextureManager().bindTexture(background);
 
-        int widthX = (this.width - this.xSize) / 2;
-        int heightY = (this.height - this.ySize) / 2;
+        int xStart = (this.width - this.xSize) / 2;
+        int yStart = (this.height - this.ySize) / 2;
 
-        this.blit(widthX, heightY, 0, 0, this.xSize, this.ySize);
+        this.blit(xStart, yStart, 0, 0, this.xSize, this.ySize);
 
         ContainerMobDustSmelter container = this.getContainer();
 
         int bufferScale = container.getFuelLeftScaled(39);
-        this.blit(widthX + 10, heightY + 57 - bufferScale + 1, 0, 206 - bufferScale, 12, bufferScale);
+        this.blit(xStart + 10, yStart + 57 - bufferScale + 1, 0, 206 - bufferScale, 12, bufferScale);
 
         if(container.isSmelting()) {
             int progressScaled = container.getCookProgressScaled(24);
-
-            this.blit(widthX + 93, heightY + 36, 176, 14, progressScaled + 1, 16);
+            this.blit(xStart + 98, yStart + 35, 176, 10, progressScaled + 1, 16);
         }
 
+    }
+
+    @Override
+    protected void renderHoveredToolTip(int mouseX, int mouseY) {
+        super.renderHoveredToolTip(mouseX, mouseY);
+
+        ContainerMobDustSmelter container = this.getContainer();
+
+        if (mouseX > this.guiLeft + 10 && mouseX < this.guiLeft + 23 && mouseY > this.guiTop + 19 && mouseY < this.guiTop + 60) {
+            this.renderTooltip(container.getTotalFuelStored() + " / " + container.getTotalFuelCapacity(), mouseX, mouseY);
+        }
     }
 }

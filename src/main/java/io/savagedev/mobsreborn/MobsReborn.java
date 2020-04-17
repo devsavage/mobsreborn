@@ -24,10 +24,7 @@ package io.savagedev.mobsreborn;
  */
 
 import io.savagedev.mobsreborn.events.MobDropHandler;
-import io.savagedev.mobsreborn.init.ModBlocks;
-import io.savagedev.mobsreborn.init.ModContainers;
-import io.savagedev.mobsreborn.init.ModItems;
-import io.savagedev.mobsreborn.init.ModTileEntities;
+import io.savagedev.mobsreborn.init.*;
 import io.savagedev.mobsreborn.reference.ModReference;
 import io.savagedev.mobsreborn.util.LogHelper;
 import net.minecraft.item.ItemGroup;

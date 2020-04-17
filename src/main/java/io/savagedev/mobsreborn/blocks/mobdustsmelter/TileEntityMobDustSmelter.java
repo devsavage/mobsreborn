@@ -26,14 +26,16 @@ package io.savagedev.mobsreborn.blocks.mobdustsmelter;
 import com.sun.java.accessibility.util.java.awt.TextComponentTranslator;
 import io.savagedev.mobsreborn.blocks.BaseInventoryTileEntity;
 import io.savagedev.mobsreborn.blocks.BaseTileEntityBlock;
+import io.savagedev.mobsreborn.init.ModItems;
 import io.savagedev.mobsreborn.init.ModTileEntities;
 import io.savagedev.mobsreborn.util.BaseItemStackHandler;
-import io.savagedev.mobsreborn.util.ISpecialRecipe;
 import io.savagedev.mobsreborn.util.LogHelper;
 import io.savagedev.mobsreborn.util.SidedItemStackHandlerWrapper;
+import io.savagedev.mobsreborn.util.helper.StackHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
@@ -50,6 +52,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import sun.rmi.runtime.Log;
@@ -61,16 +64,8 @@ import java.util.function.Function;
 public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements INamedContainerProvider, ITickableTileEntity
 {
     private final BaseItemStackHandler inventory = new BaseItemStackHandler(4);
-    private final LazyOptional<IItemHandlerModifiable>[] handlers = SidedItemStackHandlerWrapper.create(this.inventory, new Direction[] { Direction.UP, Direction.DOWN, Direction.NORTH }, this::canInsertStackSided, null);
-    private ISpecialRecipe recipe;
     private int progress;
-    private int fuel;
-    private int fuelLeft;
-    private int fuelItemValue;
-
     private int totalFuelStored;
-    private int totalFuelCapacity = 14000;
-    private int fuelCost = 2000;
 
     private final IIntArray data = new IIntArray() {
         @Override
@@ -79,15 +74,7 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
                 case 0:
                     return TileEntityMobDustSmelter.this.getProgress();
                 case 1:
-                    return TileEntityMobDustSmelter.this.getFuel();
-                case 2:
-                    return TileEntityMobDustSmelter.this.getFuelLeft();
-                case 3:
-                    return TileEntityMobDustSmelter.this.getFuelItemValue();
-                case 4:
-                    return TileEntityMobDustSmelter.this.getOperationTime();
-                case 5:
-                    return TileEntityMobDustSmelter.this.getTotalFuelStored();
+                    return TileEntityMobDustSmelter.this.getFuelStored();
                 default:
                     return 0;
             }
@@ -98,14 +85,13 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
 
         @Override
         public int size() {
-            return 6;
+            return 2;
         }
     };
 
     public TileEntityMobDustSmelter() {
         super(ModTileEntities.mob_dust_smelter.get());
-        this.inventory.setSlotValidator(this::canInsertStack);
-        this.inventory.setOutputSlots(1);
+        this.inventory.setOutputSlots(3);
     }
 
     @Override
@@ -116,16 +102,22 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
     @Override
     public void read(CompoundNBT compound) {
         super.read(compound);
+        this.progress = compound.getInt("Progress");
+        this.totalFuelStored = compound.getInt("StoredFuel");
+        ItemStackHelper.loadAllItems(compound, this.getInventory().getStacks());
     }
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {
+        compound.putInt("Progress", this.progress);
+        compound.putInt("StoredFuel", this.totalFuelStored);
+        ItemStackHelper.saveAllItems(compound, this.getInventory().getStacks());
         return super.write(compound);
     }
 
     @Override
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("container.mobsreborn.mob_dust_smelter", new Object[0]);
+        return new TranslationTextComponent("container.mobsreborn.mob_dust_smelter");
     }
 
     @Nullable
@@ -143,7 +135,6 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
             return;
 
         if(!this.inventory.getStackInSlot(0).isEmpty()) {
-
             if(FurnaceTileEntity.isFuel(this.inventory.getStackInSlot(0))) {
                 if(!isFuelFull()) {
                     this.totalFuelStored += 200;
@@ -154,14 +145,60 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
             }
         }
 
+        // Temp recipe handler
+
+        if(this.hasFuel()) {
+            ItemStack input1 = this.inventory.getStackInSlot(1);
+            ItemStack input2 = this.inventory.getStackInSlot(2);
+            ItemStack output = this.inventory.getStackInSlot(3);
+
+            if(!input1.isEmpty() && !input2.isEmpty()) {
+                ItemStack outputStack = this.getRecipeOutput(input1, input2);
+                if(!outputStack.isEmpty()) {
+                    if(!outputStack.isEmpty() && (output.isEmpty() || StackHelper.canCombineStacks(output, outputStack))) {
+                        this.progress++;
+
+                        LogHelper.debug(this.progress);
+
+                        if(this.progress >= this.getOperationTime()) {
+                            this.totalFuelStored -= this.getFuelCost();
+                            if(this.totalFuelStored <= 0) {
+                                this.totalFuelStored = 0;
+                            }
+                            this.inventory.extractItemSuper(1, 1, false);
+                            this.inventory.extractItemSuper(2, 1, false);
+
+                            if(output.isEmpty()) {
+                                this.inventory.setStackInSlot(3, outputStack.copy());
+                            } else {
+                                output.grow(outputStack.getCount());
+                            }
+
+                            this.progress = 0;
+                        }
+
+                        dirty = true;
+                    }
+                }
+            } else {
+                if(this.progress > 0) {
+                    this.progress = 0;
+                    dirty = true;
+                }
+            }
+        }
+
         if(dirty) {
             this.markDirty();
-            LogHelper.debug(this.getTotalFuelStored());
         }
     }
 
-    public int getTotalFuelStored() {
+    public int getFuelStored() {
         return this.totalFuelStored;
+    }
+
+    public int getProgress() {
+        return this.progress;
     }
 
     private boolean hasFuel() {
@@ -169,50 +206,34 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
     }
 
     private boolean isFuelFull() {
-        return this.totalFuelStored >= totalFuelCapacity;
+        return this.getFuelStored() >= getFuelCapacity();
     }
 
-    public int getProgress() {
-        return this.progress;
-    }
-
-    public int getOperationTime() {
+    public static int getOperationTime() {
         return 200;
     }
 
-    public int getFuel() {
-        return this.fuel;
+    public int getFuelCost() {
+        return 2000;
     }
 
-    public int getFuelUsage() {
-        return this.fuelCost;
+    public static int getFuelCapacity() {
+        return 14000;
     }
 
-    public int getFuelCapacity() {
-        return this.totalFuelCapacity;
-    }
+    private ItemStack getRecipeOutput(ItemStack stack1, ItemStack stack2) {
+        if(!stack1.isEmpty() && !stack2.isEmpty()) {
+            if(stack1.getItem() == ModItems.creeper_dust.get()) {
+                return new ItemStack(ModItems.creeper_metal.get(), 1);
+            } else if(stack1.getItem() == ModItems.enderman_dust.get()) {
+                return new ItemStack(ModItems.enderman_metal.get(), 1);
+            } else if(stack1.getItem() == ModItems.zombie_dust.get()) {
+                return new ItemStack(ModItems.zombie_metal.get(), 1);
+            } else if(stack1.getItem() == ModItems.skeleton_dust.get()) {
+                return new ItemStack(ModItems.skeleton_metal.get(), 1);
+            }
+        }
 
-    public int getFuelLeft() {
-        return this.fuelLeft;
-    }
-
-    public int getFuelStored() {
-        return this.totalFuelCapacity;
-    }
-
-    public int getFuelItemValue() {
-        return this.fuelItemValue;
-    }
-
-    private boolean canInsertStack(int slot, ItemStack stack) {
-        return this.canInsertStackSided(slot, stack, null);
-    }
-
-    public boolean canInsertStackSided(int slot, ItemStack stack, Direction direction) {
-        if (direction == null)
-            return true;
-        if (slot == 1 && direction == Direction.WEST)
-            return FurnaceTileEntity.isFuel(stack);
-        return false;
+        return ItemStack.EMPTY;
     }
 }

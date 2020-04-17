@@ -67,7 +67,7 @@ public class BlockMobDustSmelter extends BaseTileEntityBlock
             TileEntity tileEntity = worldIn.getTileEntity(pos);
             if(tileEntity instanceof TileEntityMobDustSmelter) {
                 player.openContainer((INamedContainerProvider) tileEntity);
-                LogHelper.debug(((TileEntityMobDustSmelter) tileEntity).getTotalFuelStored());
+                LogHelper.debug(((TileEntityMobDustSmelter) tileEntity).getFuelStored());
             }
         }
 

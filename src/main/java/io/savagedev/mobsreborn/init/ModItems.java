@@ -44,15 +44,15 @@ public class ModItems
     public static final List<Supplier<? extends Item>> BLOCK_ENTRIES = new ArrayList<>();
     public static final List<Supplier<? extends Item>> ENTRIES = new ArrayList<>();
 
-    public static final RegistryObject<BaseItem> creeper_dust = registerDust(ModNames.Items.creeper_dust, ItemMobDustItem.CREEPER_DUST);
-    public static final RegistryObject<BaseItem> zombie_dust = registerDust(ModNames.Items.zombie_dust, ItemMobDustItem.ZOMBIE_DUST);
-    public static final RegistryObject<BaseItem> skeleton_dust = registerDust(ModNames.Items.skeleton_dust, ItemMobDustItem.SKELETON_DUST);
-    public static final RegistryObject<BaseItem> enderman_dust = registerDust(ModNames.Items.enderman_dust, ItemMobDustItem.ENDERMAN_DUST);
+    public static final RegistryObject<ItemMobDust> creeper_dust = registerDust(ModNames.Items.creeper_dust, ItemMobDustItem.CREEPER_DUST);
+    public static final RegistryObject<ItemMobDust> zombie_dust = registerDust(ModNames.Items.zombie_dust, ItemMobDustItem.ZOMBIE_DUST);
+    public static final RegistryObject<ItemMobDust> skeleton_dust = registerDust(ModNames.Items.skeleton_dust, ItemMobDustItem.SKELETON_DUST);
+    public static final RegistryObject<ItemMobDust> enderman_dust = registerDust(ModNames.Items.enderman_dust, ItemMobDustItem.ENDERMAN_DUST);
 
-    public static final RegistryObject<BaseItem> creeper_metal = registerMobMetal(ModNames.Items.creeper_metal, ItemMobMetalItem.CREEPER_METAL);
-    public static final RegistryObject<BaseItem> zombie_metal = registerMobMetal(ModNames.Items.zombie_metal, ItemMobMetalItem.ZOMBIE_METAL);
-    public static final RegistryObject<BaseItem> skeleton_metal = registerMobMetal(ModNames.Items.skeleton_metal, ItemMobMetalItem.SKELETON_METAL);
-    public static final RegistryObject<BaseItem> enderman_metal = registerMobMetal(ModNames.Items.enderman_metal, ItemMobMetalItem.ENDERMAN_METAL);
+    public static final RegistryObject<ItemMobMetal> creeper_metal = registerMobMetal(ModNames.Items.creeper_metal, ItemMobMetalItem.CREEPER_METAL);
+    public static final RegistryObject<ItemMobMetal> zombie_metal = registerMobMetal(ModNames.Items.zombie_metal, ItemMobMetalItem.ZOMBIE_METAL);
+    public static final RegistryObject<ItemMobMetal> skeleton_metal = registerMobMetal(ModNames.Items.skeleton_metal, ItemMobMetalItem.SKELETON_METAL);
+    public static final RegistryObject<ItemMobMetal> enderman_metal = registerMobMetal(ModNames.Items.enderman_metal, ItemMobMetalItem.ENDERMAN_METAL);
 
     @SubscribeEvent
     public void onRegisterItems(RegistryEvent.Register<Item> event) {
