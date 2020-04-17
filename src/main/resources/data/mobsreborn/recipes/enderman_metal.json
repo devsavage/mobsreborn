@@ -1,0 +1,14 @@
+{
+  "type": "mobsreborn:mob_dust_smelter",
+  "ingredients": [
+    {
+      "item": "mobsreborn:enderman_dust"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    }
+  ],
+  "result": {
+    "item": "mobsreborn:enderman_metal"
+  }
+}

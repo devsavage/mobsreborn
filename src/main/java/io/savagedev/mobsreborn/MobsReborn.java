@@ -53,6 +53,7 @@ public class MobsReborn
         modEventBus.register(this);
         modEventBus.register(new ModBlocks());
         modEventBus.register(new ModItems());
+        modEventBus.register(new ModRecipeSerializers());
         modEventBus.register(new ModTileEntities());
         modEventBus.register(new ModContainers());
     }
@@ -64,7 +65,6 @@ public class MobsReborn
 
     @SubscribeEvent
     public void onCommonSetup(FMLCommonSetupEvent event) {
-        LogHelper.info("onCommonSetup");
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new MobDropHandler());
     }

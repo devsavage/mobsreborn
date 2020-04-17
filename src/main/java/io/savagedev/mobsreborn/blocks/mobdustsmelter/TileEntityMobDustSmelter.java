@@ -26,6 +26,9 @@ package io.savagedev.mobsreborn.blocks.mobdustsmelter;
 import com.sun.java.accessibility.util.java.awt.TextComponentTranslator;
 import io.savagedev.mobsreborn.blocks.BaseInventoryTileEntity;
 import io.savagedev.mobsreborn.blocks.BaseTileEntityBlock;
+import io.savagedev.mobsreborn.crafting.recipe.ISpecialRecipe;
+import io.savagedev.mobsreborn.crafting.recipe.MobDustSmelterRecipe;
+import io.savagedev.mobsreborn.crafting.recipe.RecipeTypes;
 import io.savagedev.mobsreborn.init.ModItems;
 import io.savagedev.mobsreborn.init.ModTileEntities;
 import io.savagedev.mobsreborn.util.BaseItemStackHandler;
@@ -33,6 +36,7 @@ import io.savagedev.mobsreborn.util.LogHelper;
 import io.savagedev.mobsreborn.util.SidedItemStackHandlerWrapper;
 import io.savagedev.mobsreborn.util.helper.StackHelper;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -46,6 +50,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IIntArray;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -64,6 +69,9 @@ import java.util.function.Function;
 public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements INamedContainerProvider, ITickableTileEntity
 {
     private final BaseItemStackHandler inventory = new BaseItemStackHandler(4);
+    private final BaseItemStackHandler recipeInv = new BaseItemStackHandler(2);
+    private ISpecialRecipe recipe;
+
     private int progress;
     private int totalFuelStored;
 
@@ -153,18 +161,22 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
             ItemStack output = this.inventory.getStackInSlot(3);
 
             if(!input1.isEmpty() && !input2.isEmpty()) {
-                ItemStack outputStack = this.getRecipeOutput(input1, input2);
-                if(!outputStack.isEmpty()) {
-                    if(!outputStack.isEmpty() && (output.isEmpty() || StackHelper.canCombineStacks(output, outputStack))) {
-                        this.progress++;
+                if(this.recipe == null || !this.recipe.matches(this.inventory)) {
+                    this.recipe = (ISpecialRecipe) world.getRecipeManager().getRecipe(RecipeTypes.mob_dust_smelter, this.inventory.toIInventory(), world).orElse(null);
+                }
 
-                        LogHelper.debug(this.progress);
+                if(this.recipe != null) {
+                    ItemStack outputStack = this.recipe.getRecipeOutput();
+                    if(!outputStack.isEmpty() && (output.isEmpty() || StackHelper.canCombineStacks(output, outputStack)) && this.canSmelt(this.getFuelCost())) {
+                        this.progress++;
 
                         if(this.progress >= this.getOperationTime()) {
                             this.totalFuelStored -= this.getFuelCost();
+
                             if(this.totalFuelStored <= 0) {
                                 this.totalFuelStored = 0;
                             }
+
                             this.inventory.extractItemSuper(1, 1, false);
                             this.inventory.extractItemSuper(2, 1, false);
 
@@ -193,6 +205,11 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
         }
     }
 
+    private void updateRecipeInv(ItemStack input1, ItemStack input2) {
+        this.recipeInv.setStackInSlot(1, input1);
+        this.recipeInv.setStackInSlot(2, input2);
+    }
+
     public int getFuelStored() {
         return this.totalFuelStored;
     }
@@ -203,6 +220,10 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
 
     private boolean hasFuel() {
         return this.totalFuelStored > 0;
+    }
+
+    private boolean canSmelt(int cost) {
+        return this.getFuelStored() >= cost;
     }
 
     private boolean isFuelFull() {
@@ -219,21 +240,5 @@ public class TileEntityMobDustSmelter extends BaseInventoryTileEntity implements
 
     public static int getFuelCapacity() {
         return 14000;
-    }
-
-    private ItemStack getRecipeOutput(ItemStack stack1, ItemStack stack2) {
-        if(!stack1.isEmpty() && !stack2.isEmpty()) {
-            if(stack1.getItem() == ModItems.creeper_dust.get()) {
-                return new ItemStack(ModItems.creeper_metal.get(), 1);
-            } else if(stack1.getItem() == ModItems.enderman_dust.get()) {
-                return new ItemStack(ModItems.enderman_metal.get(), 1);
-            } else if(stack1.getItem() == ModItems.zombie_dust.get()) {
-                return new ItemStack(ModItems.zombie_metal.get(), 1);
-            } else if(stack1.getItem() == ModItems.skeleton_dust.get()) {
-                return new ItemStack(ModItems.skeleton_metal.get(), 1);
-            }
-        }
-
-        return ItemStack.EMPTY;
     }
 }

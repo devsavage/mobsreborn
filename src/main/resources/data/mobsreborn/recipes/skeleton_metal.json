@@ -1,0 +1,14 @@
+{
+  "type": "mobsreborn:mob_dust_smelter",
+  "ingredients": [
+    {
+      "item": "mobsreborn:skeleton_dust"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    }
+  ],
+  "result": {
+    "item": "mobsreborn:skeleton_metal"
+  }
+}
